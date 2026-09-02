@@ -1,5 +1,6 @@
 package com.example.hellmate.navigation
 
+import android.bluetooth.BluetoothAdapter
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.hellmate.BluetoothViewModel
 import com.example.hellmate.screens.AlertsScreen
 import com.example.hellmate.screens.EmergencyContactsScreen
 import com.example.hellmate.screens.HomeScreen
@@ -36,9 +38,11 @@ import com.example.hellmate.screens.SettingsScreen
 import com.example.hellmate.screens.SosScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun NavigationBase() {
+fun NavigationBase(
+    viewModel: BluetoothViewModel,
+    adapter: BluetoothAdapter?
+) {
     val navController = rememberNavController()
     var currentDestination = Routes.Home
     var destinationIndex by rememberSaveable { mutableIntStateOf(currentDestination.ordinal) }
@@ -96,7 +100,12 @@ fun NavigationBase() {
                 Routes.entries.forEach { route ->
                     composable(route.route) {
                         when (route) {
-                            Routes.Home -> HomeScreen(onSos = { navController.navigate(Routes.Sos.route) }, onEditEmergencies = { navController.navigate(Routes.EmergencyContacts.route) })
+                            Routes.Home -> HomeScreen(
+                                onSos = { navController.navigate(Routes.Sos.route) },
+                                onEditEmergencies = { navController.navigate(Routes.EmergencyContacts.route) },
+                                adapter = adapter,
+                                viewModel = viewModel
+                            )
                             Routes.Settings -> SettingsScreen()
                             Routes.EmergencyContacts -> EmergencyContactsScreen()
                             Routes.Alerts -> AlertsScreen()
